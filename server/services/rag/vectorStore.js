@@ -4,6 +4,10 @@ export const addChunks = (chunks) => {
     vectorStore.push(...chunks);
 };
 
+export const clearStore = () => {
+    vectorStore.length = 0;
+};
+
 const cosineSimilarity = (a, b) => {
     let dotProduct = 0;
     let magnitudeA = 0;
@@ -20,6 +24,8 @@ const cosineSimilarity = (a, b) => {
     }
     return dotProduct / (magnitudeA * magnitudeB);
 }
+
+export const getStoreSize = () => vectorStore.length;
 
 export const searchSimilar = (queryEmbedding, topK = 3) => {
     const results = vectorStore.map(chunk => {

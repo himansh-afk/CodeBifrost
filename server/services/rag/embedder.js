@@ -6,5 +6,10 @@ export const generateEmbedding = async (text) => {
         input: text
     }
     );
+
+    if (response.embeddings[0].length === 0) {
+        throw new Error("Ollama returned empty embedding vector.");
+    }
+
     return response.embeddings[0];
 }
