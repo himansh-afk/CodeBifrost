@@ -2,6 +2,8 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import repositoryRoutes from "./routes/repositoryRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import connectDB from "./config/db.js";
 
 process.env.GITHUB_TOKEN
 
@@ -17,6 +19,9 @@ app.get("/api/test", (req, res) => {
 });
 
 app.use("/api/repository", repositoryRoutes);
+app.use("/api/auth", authRoutes);
+
+connectDB();
 
 const PORT = 5000;
 

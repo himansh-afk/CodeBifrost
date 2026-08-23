@@ -41,13 +41,12 @@ export const getRepositoryTree = async (
     return response.data;
 };
 
-export const getFileContent = async (owner, repo, path) => {
+export const getBlobContent = async (owner, repo, sha) => {
     const response = await githubApi.get(
-        `/repos/${owner}/${repo}/contents/${path}`
+        `/repos/${owner}/${repo}/git/blobs/${sha}`
     );
-
     return response.data;
-};
+}
 
 export const decodeFileContent = (content) => {
     return Buffer.from(content, "base64").toString("utf-8");
