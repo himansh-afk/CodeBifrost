@@ -1,6 +1,6 @@
 import { parseGitHubUrl } from "../utils/helpers.js";
 import { filterSourceFiles } from "../services/github/fileFilter.js";
-import { addChunks, clearStore, getStoreSize } from "../services/rag/vectorStore.js";
+import { addChunks, clearStore, getNamespaceSize } from "../services/rag/vectorStore.js";
 import {
     getBranch,
     getRepository,
@@ -13,34 +13,30 @@ import { chunkCode } from "../services/rag/chunker.js";
 import { generateEmbedding } from "../services/rag/embedder.js";
 
 export const askRepository = async (req, res) => {
-
     try {
-
-        const { question } = req.body;
-
+        const { question, url } = req.body;
         if (!question) {
             return res.status(400).json({
                 message: "question is required"
             });
         }
-
-        if (getStoreSize() === 0) {
+        if (!url) {
             return res.status(400).json({
-                message: "No repository indexed yet. Call /analyze first."
+                message: "repo url is required"
             });
         }
-
-        const result = await askCodebase(question);
-
+        const { owner, repo } = parseGitHubUrl(url);
+        const namespace = `${owner}/${repo}`;
+        const size = await getNamespaceSize(namespace);
+        if (size === 0) {
+            return res.status(400).json({
+                message: "Repo hasnt analyzed yet.call /analyze first"
+            });
+        }
+        const result = await askCodebase(question, namespace);
         res.json(result);
-
     } catch (error) {
-
-        console.error(
-            "RAG question error:",
-            error.message
-        );
-
+        console.error("RAG question error:", error.message);
         res.status(500).json({
             message: "Failed to answer question",
             error: error.message
@@ -65,6 +61,7 @@ export const analyzeRepository = async (req, res) => {
         // -----------------------------
 
         const { owner, repo } = parseGitHubUrl(url);
+        const namespace = `${owner}/${repo}`;
 
 
         // -----------------------------
@@ -161,8 +158,10 @@ export const analyzeRepository = async (req, res) => {
 
             }
         }
-        clearStore();
-        addChunks(embeddedChunks);
+        await clearStore(namespace);
+        console.log("Total embedded chunks:", embeddedChunks.length);
+        //console.log("Sample chunk:", JSON.stringify(embeddedChunks[0], null, 2));
+        await addChunks(embeddedChunks, namespace);
 
 
         // -----------------------------

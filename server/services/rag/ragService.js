@@ -2,11 +2,11 @@ import { generateEmbedding } from "./embedder.js";
 import { retrieveSimilarChunks } from "./retrievalService.js";
 import { generateAnswer } from "../llm/llmService.js";
 
-export const askCodebase = async (question) => {
+export const askCodebase = async (question, namespace) => {
     const questionEmbedding = await generateEmbedding(question);
 
-    const relevantChunks = await retrieveSimilarChunks(questionEmbedding, 5);
-    console.log("Chunks retrieved:", relevantChunks);
+    const relevantChunks = await retrieveSimilarChunks(questionEmbedding, namespace, 8);
+    //console.log("Chunks retrieved:", relevantChunks);
     const answer = await generateAnswer(question, relevantChunks);
 
     return {
