@@ -27,7 +27,7 @@ const cosineSimilarity = (a, b) => {
 
 export const getStoreSize = () => vectorStore.length;
 
-export const searchSimilar = (queryEmbedding, topK = 3) => {
+export const searchSimilar = (queryEmbedding, topK = 8) => {
     const results = vectorStore.map(chunk => {
         const score = cosineSimilarity(
             queryEmbedding, chunk.embedding
