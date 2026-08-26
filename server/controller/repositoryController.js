@@ -6,11 +6,13 @@ import {
     getRepository,
     getRepositoryTree,
     getBlobContent,
-    decodeFileContent
+    decodeFileContent,
+    getValidGithubAccessToken
 } from "../services/github/githubService.js";
 import { askCodebase } from "../services/rag/ragService.js";
 import { chunkCode } from "../services/rag/chunker.js";
 import { generateEmbedding } from "../services/rag/embedder.js";
+import User from "../models/User.js";
 
 export const askRepository = async (req, res) => {
     try {
@@ -48,6 +50,22 @@ export const analyzeRepository = async (req, res) => {
 
     try {
 
+        const user = await User.findById(req.user.userId);
+
+        if (!user) {
+            return res.status(401).json({
+                message: "User not found"
+            });
+        }
+
+        if (!user.githubAccessToken) {
+            return res.status(400).json({
+                message: "GitHub account not connected"
+            });
+        }
+
+        const githubToken = await getValidGithubAccessToken(user);
+
         const { url } = req.body;
 
         if (!url) {
@@ -68,7 +86,7 @@ export const analyzeRepository = async (req, res) => {
         // 2. Repository metadata
         // -----------------------------
 
-        const repository = await getRepository(owner, repo);
+        const repository = await getRepository(owner, repo, githubToken);
 
         const branch = repository.default_branch;
 
@@ -80,7 +98,8 @@ export const analyzeRepository = async (req, res) => {
         const branchData = await getBranch(
             owner,
             repo,
-            branch
+            branch,
+            githubToken
         );
 
         const commitSha = branchData.commit.sha;
@@ -93,7 +112,8 @@ export const analyzeRepository = async (req, res) => {
         const tree = await getRepositoryTree(
             owner,
             repo,
-            commitSha
+            commitSha,
+            githubToken
         );
 
 
@@ -118,7 +138,8 @@ export const analyzeRepository = async (req, res) => {
             const fileData = await getBlobContent(
                 owner,
                 repo,
-                file.sha
+                file.sha,
+                githubToken
             );
 
             const content = decodeFileContent(
