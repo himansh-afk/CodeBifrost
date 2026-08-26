@@ -15,8 +15,28 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
         minlength: 6
+    },
+    githubId: {
+        type: String,
+        unique: true,
+        sparse: true
+    },
+    githubUsername: {
+        type: String,
+        trim: true
+    },
+    githubAccessToken: {
+        type: String
+    },
+    githubRefreshToken: {
+        type: String
+    },
+    githubTokenExpiresAt: {
+        type: Date
+    },
+    avatar: {
+        type: String
     }
 },
     {
