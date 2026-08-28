@@ -1,7 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
-import { getGithubAccessToken, getGithubUser, getGithubEmail } from "../services/github/githubService.js";
+import { getGithubUser, getGithubEmail } from "../services/github/githubService.js";
+import { getGithubAccessToken } from "../services/github/githubAuthService.js";
 
 export const register = async (req, res) => {
     try {

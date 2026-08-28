@@ -1,18 +1,12 @@
 import { parseGitHubUrl } from "../utils/helpers.js";
 import { filterSourceFiles } from "../services/github/fileFilter.js";
 import { addChunks, clearStore, getNamespaceSize } from "../services/rag/vectorStore.js";
-import {
-    getBranch,
-    getRepository,
-    getRepositoryTree,
-    getBlobContent,
-    decodeFileContent,
-    getValidGithubAccessToken
-} from "../services/github/githubService.js";
+import { getBranch, getRepository, getRepositoryTree, getBlobContent, decodeFileContent } from "../services/github/githubService.js";
 import { askCodebase } from "../services/rag/ragService.js";
 import { chunkCode } from "../services/rag/chunker.js";
 import { generateEmbedding } from "../services/rag/embedder.js";
 import User from "../models/User.js";
+import { getValidGithubAccessToken } from "../services/github/githubAuthService.js";
 
 export const askRepository = async (req, res) => {
     try {
@@ -47,136 +41,81 @@ export const askRepository = async (req, res) => {
 };
 
 export const analyzeRepository = async (req, res) => {
-
     try {
-
         const user = await User.findById(req.user.userId);
-
         if (!user) {
             return res.status(401).json({
                 message: "User not found"
             });
         }
-
         if (!user.githubAccessToken) {
             return res.status(400).json({
                 message: "GitHub account not connected"
             });
         }
-
         const githubToken = await getValidGithubAccessToken(user);
-
         const { url } = req.body;
-
         if (!url) {
             return res.status(400).json({
                 message: "repository url is required"
             });
         }
 
-        // -----------------------------
-        // 1. Parse GitHub URL
-        // -----------------------------
-
-        const { owner, repo } = parseGitHubUrl(url);
+        const { owner, repo } = parseGitHubUrl(url);// 1. Parse GitHub URL
         const namespace = `${owner}/${repo}`;
 
-
-        // -----------------------------
-        // 2. Repository metadata
-        // -----------------------------
-
-        const repository = await getRepository(owner, repo, githubToken);
-
+        const repository = await getRepository(owner, repo, githubToken);// 2. Repository metadata
         const branch = repository.default_branch;
 
-
-        // -----------------------------
-        // 3. Get latest commit
-        // -----------------------------
-
-        const branchData = await getBranch(
+        const branchData = await getBranch(// 3. Get latest commit
             owner,
             repo,
             branch,
             githubToken
         );
-
         const commitSha = branchData.commit.sha;
 
-
-        // -----------------------------
-        // 4. Get repository tree
-        // -----------------------------
-
-        const tree = await getRepositoryTree(
+        const tree = await getRepositoryTree(// 4. Get repository tree
             owner,
             repo,
             commitSha,
             githubToken
         );
 
+        const files = filterSourceFiles(tree.tree);// 5. Filter source files
 
-        // -----------------------------
-        // 5. Filter source files
-        // -----------------------------
-
-        const files = filterSourceFiles(tree.tree);
-
-
-        // const filesToProcess = files;
-
-
-        // -----------------------------
-        // 6. Fetch source code
-        // -----------------------------
-
-        const sourceFiles = [];
-
+        const sourceFiles = [];// 6. Fetch source code
         for (const file of files) {
-
             const fileData = await getBlobContent(
                 owner,
                 repo,
                 file.sha,
                 githubToken
             );
-
             const content = decodeFileContent(
                 fileData.content
             );
-
             sourceFiles.push({
                 path: file.path,
                 content
             });
         }
 
-
-        // -----------------------------
-        // 7. Chunk + Embed
-        // -----------------------------
-
-        const embeddedChunks = [];
-
+        const embeddedChunks = [];//7. Chunk + Embed
         for (const file of sourceFiles) {
-
             const chunks = chunkCode(
                 file.content,
                 file.path
             );
-
             for (const chunk of chunks) {
                 if (!chunk.chunkText || chunk.chunkText.trim() === "") continue;
                 const embedding = await generateEmbedding(
                     chunk.chunkText
                 );
-
                 embeddedChunks.push({
                     ...chunk,
                     embedding
                 });
-
             }
         }
         await clearStore(namespace);
@@ -184,42 +123,26 @@ export const analyzeRepository = async (req, res) => {
         //console.log("Sample chunk:", JSON.stringify(embeddedChunks[0], null, 2));
         await addChunks(embeddedChunks, namespace);
 
-
-        // -----------------------------
         // 8. Response
-        // -----------------------------
-
         res.json({
-
             owner,
             repo,
             branch,
             commitSha,
-
             totalTreeItems: tree.tree.length,
-
             filesFound: files.length,
-
             filesProcessed: sourceFiles.length,
-
             totalChunks: embeddedChunks.length,
-
             embeddingDimensions:
                 embeddedChunks[0]?.embedding?.length || 0
-
         });
-
     } catch (error) {
-
         console.error(
             "GitHub/RAG error:",
             error.response?.data || error.message
         );
-
         res.status(500).json({
-
             message: "Failed to analyze repository",
-
             error:
                 error.response?.data?.message ||
                 error.message
