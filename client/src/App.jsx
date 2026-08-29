@@ -1,45 +1,15 @@
-import { useState } from "react";
-import axios from "axios";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import "./App.css";
 
 function App() {
-  const [message, setMessage] = useState("");
-
-  const testBackend = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:5000/api/test"
-      );
-
-      setMessage(response.data.message);
-    } catch (error) {
-      console.error(error);
-      setMessage("Backend Connection Failed");
-    }
-  };
-
   return (
     <div>
-      <h1>CodeBifrost</h1>
-
-      <button onClick={testBackend}>
-        Test Backend
-      </button>
-
-      <p>{message}</p>
-
-      <Link to="/login">
-        Login
-      </Link>
-
-      <br />
-
-      <Link to="/register">
-        Register
-      </Link>
+      <div className="orb orb-1" />
+      <div className="orb orb-2" />
+      <div className="orb orb-3" />
 
       <Routes>
         <Route path="/login" element={<Login />} />
