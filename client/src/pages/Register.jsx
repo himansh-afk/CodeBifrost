@@ -59,7 +59,7 @@ const Register = () => {
                             Continue with GitHub
                         </button>
 
-                        <div className="divider">or</div>
+                        <div className="divider"></div>
 
                         <p style={{ textAlign: "center", fontSize: "0.85rem", color: "var(--text-muted)" }}>
                             GitHub is required to analyze repositories
