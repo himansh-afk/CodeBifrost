@@ -1,8 +1,9 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import Register from "./pages/Register";
+import GithubAuth from "./pages/GithubAuth.jsx";
 import Landing from "./pages/Landing";
+import Register from "./pages/Register.jsx";
 import "./App.css";
 
 function App() {
@@ -15,8 +16,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/register" element={<GithubAuth />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/register/complete" element={<Register />} />
       </Routes>
     </div>
   );

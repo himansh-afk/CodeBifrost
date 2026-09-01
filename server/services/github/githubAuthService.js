@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export const refreshGithubAccessToken = async (refreshToken) => {
     const response = await axios.post(
         "https://github.com/login/oauth/access_token",

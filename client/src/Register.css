@@ -1,0 +1,29 @@
+.input-locked {
+    opacity: 0.75;
+    cursor: not-allowed;
+}
+
+.input-hint {
+    margin-top: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--text-muted, #888);
+    /* use whatever muted color var you have */
+}
+
+.input-icon-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon-wrapper .input {
+    width: 100%;
+    padding-right: 2.5rem;
+}
+
+.input-lock-icon {
+    position: absolute;
+    right: 0.75rem;
+    color: #888;
+    pointer-events: none;
+}

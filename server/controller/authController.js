@@ -281,7 +281,7 @@ export const githubCallback = async (req, res) => {
             }
         );
         res.redirect(
-            `${process.env.FRONTEND_URL}/register?githubToken=${registrationToken}`
+            `${process.env.FRONTEND_URL}/register/complete?githubToken=${registrationToken}`
         );
     } catch (error) {
 
