@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { Lock } from "lucide-react"
+import { Lock } from "lucide-react";
 import "../Register.css";
+import Navbar from "../components/Navbar";
 
 const Register = () => {
     const [searchParams] = useSearchParams();
@@ -58,77 +59,80 @@ const Register = () => {
         }
     };
     return (
-        <div className="page">
-            <div className="auth-card">
-                <h1>Create your CodeBifrost account</h1>
-                <form onSubmit={handleRegister}>
-                    <div className="form-group">
-                        <label>GitHub account</label>
-                        <div className="input-icon-wrapper">
+        <>
+            <Navbar />
+            <div className="page">
+                <div className="auth-card">
+                    <h1>Create your CodeBifrost account</h1>
+                    <form onSubmit={handleRegister}>
+                        <div className="form-group">
+                            <label>GitHub account</label>
+                            <div className="input-icon-wrapper">
+                                <input
+                                    className="input input-locked"
+                                    type="email"
+                                    value={email}
+                                    readOnly
+                                />
+                                <Lock
+                                    className="input-lock-icon"
+                                    size={15}
+                                />
+                            </div>
+                            <p className="input-hint">
+                                This email is linked to your GitHub account.
+                            </p>
+                        </div>
+                        <div className="form-group">
+                            <label>Password</label>
                             <input
-                                className="input input-locked"
-                                type="email"
-                                value={email}
-                                readOnly
-                            />
-                            <Lock
-                                className="input-lock-icon"
-                                size={15}
+                                className="input"
+                                type="password"
+                                placeholder="Create a strong password"
+                                value={password}
+                                onChange={(e) =>
+                                    setPassword(e.target.value)
+                                }
+                                required
                             />
                         </div>
-                        <p className="input-hint">
-                            This email is linked to your GitHub account.
+                        <div className="form-group">
+                            <label>Confirm Password</label>
+                            <input
+                                className="input"
+                                type="password"
+                                placeholder="Confirm your password"
+                                value={confirmPassword}
+                                onChange={(e) =>
+                                    setConfirmPassword(e.target.value)
+                                }
+                                required
+                            />
+                        </div>
+                        <button
+                            className="btn btn-primary"
+                            type="submit"
+                            disabled={isLoading}
+                        >
+                            {isLoading
+                                ? "Creating account..."
+                                : "Create account"}
+                        </button>
+                    </form>
+                    {message && (
+                        <p className="message message-error">
+                            {message}
                         </p>
+                    )}
+                    <div className="auth-footer">
+                        Already have an account?{" "}
+                        <Link to="/login">
+                            Sign in
+                        </Link>
                     </div>
-                    <div className="form-group">
-                        <label>Password</label>
-                        <input
-                            className="input"
-                            type="password"
-                            placeholder="Create a strong password"
-                            value={password}
-                            onChange={(e) =>
-                                setPassword(e.target.value)
-                            }
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Confirm Password</label>
-                        <input
-                            className="input"
-                            type="password"
-                            placeholder="Confirm your password"
-                            value={confirmPassword}
-                            onChange={(e) =>
-                                setConfirmPassword(e.target.value)
-                            }
-                            required
-                        />
-                    </div>
-                    <button
-                        className="btn btn-primary"
-                        type="submit"
-                        disabled={isLoading}
-                    >
-                        {isLoading
-                            ? "Creating account..."
-                            : "Create account"}
-                    </button>
-                </form>
-                {message && (
-                    <p className="message message-error">
-                        {message}
-                    </p>
-                )}
-                <div className="auth-footer">
-                    Already have an account?{" "}
-                    <Link to="/login">
-                        Sign in
-                    </Link>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

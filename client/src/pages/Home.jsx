@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 const Home = () => {
     const [searchParams] = useSearchParams();
@@ -17,10 +18,13 @@ const Home = () => {
     }, [searchParams, navigate]);
 
     return (
-        <div>
-            <h1>Welcome to CodeBifrost</h1>
-            <p>You are logged in.</p>
-        </div>
+        <>
+            <Navbar />
+            <div>
+                <h1>Welcome to CodeBifrost</h1>
+                <p>You are logged in.</p>
+            </div>
+        </>
     );
 };
 

@@ -340,59 +340,11 @@ body {
   text-decoration: underline;
 }
 
-/* ─── Navbar ──────────────────────────────────────────────────────────────── */
-.navbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 32px;
-  background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(24px) saturate(1.6);
-  -webkit-backdrop-filter: blur(24px) saturate(1.6);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 2px 12px rgba(10, 40, 100, 0.07);
-}
-
-.navbar-brand {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  text-decoration: none;
-}
-
-.navbar-links {
-  display: flex;
-  gap: 8px;
-  list-style: none;
-}
-
-.navbar-links a {
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
-  padding: 6px 14px;
-  border-radius: var(--radius-sm);
-  transition: background 0.2s;
-}
-
-.navbar-links a:hover {
-  background: rgba(41, 121, 255, 0.08);
-  color: var(--accent);
-}
-
 /* ─── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 480px) {
   .auth-card {
     padding: 28px 22px;
     border-radius: var(--radius-lg);
-  }
-
-  .navbar {
-    padding: 12px 18px;
   }
 }
 

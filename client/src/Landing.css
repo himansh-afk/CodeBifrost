@@ -8,62 +8,6 @@
     flex-direction: column;
 }
 
-/* ── Navbar ── */
-.land-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 48px;
-    background: rgba(255, 255, 255, 0.28);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.45);
-}
-
-.land-brand {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    letter-spacing: -0.3px;
-}
-
-.land-nav-links {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.land-link {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--text-secondary);
-    text-decoration: none;
-    padding: 6px 14px;
-    border-radius: var(--radius-sm);
-    transition: color 0.2s;
-}
-
-.land-link:hover {
-    color: var(--accent);
-}
-
-.land-cta-sm {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #fff;
-    text-decoration: none;
-    padding: 8px 18px;
-    border-radius: var(--radius-sm);
-    background: linear-gradient(135deg, #2979ff 0%, #1565c0 100%);
-    box-shadow: 0 3px 12px rgba(41, 121, 255, 0.3);
-    transition: all 0.2s;
-}
-
-.land-cta-sm:hover {
-    box-shadow: 0 5px 18px rgba(41, 121, 255, 0.4);
-    transform: translateY(-1px);
-}
-
 /* ── Hero ── */
 .land-hero {
     flex: 1;

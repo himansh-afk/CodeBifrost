@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import "../Landing.css";
+import Navbar from "../components/Navbar";
 
 const features = [
     {
@@ -25,15 +26,7 @@ const steps = [
 const Landing = () => {
     return (
         <div className="landing">
-
-            {/* ── Navbar ── */}
-            <nav className="land-nav">
-                <span className="land-brand">CodeBifrost</span>
-                <div className="land-nav-links">
-                    <Link className="land-link" to="/login">Login</Link>
-                    <Link className="land-link" to="/register">Register</Link>
-                </div>
-            </nav>
+            <Navbar />
 
             {/* ── Hero ── */}
             <section className="land-hero">

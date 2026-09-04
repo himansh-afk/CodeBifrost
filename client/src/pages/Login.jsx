@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -27,55 +28,58 @@ const Login = () => {
     };
 
     return (
-        <div className="page">
-            <div className="auth-card">
-                <h1>Welcome back</h1>
-                <p className="subtitle">Sign in to your CodeBifrost account</p>
+        <>
+            <Navbar />
+            <div className="page">
+                <div className="auth-card">
+                    <h1>Welcome back</h1>
+                    <p className="subtitle">Sign in to your CodeBifrost account</p>
 
-                <form onSubmit={handleLogin}>
-                    <div className="form-group">
-                        <label>Email</label>
-                        <input
-                            className="input"
-                            type="email"
-                            placeholder="you@example.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
+                    <form onSubmit={handleLogin}>
+                        <div className="form-group">
+                            <label>Email</label>
+                            <input
+                                className="input"
+                                type="email"
+                                placeholder="you@example.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>Password</label>
+                            <input
+                                className="input"
+                                type="password"
+                                placeholder="••••••••"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                        </div>
+
+                        <button
+                            className="btn btn-primary"
+                            type="submit"
+                            disabled={isLoading}
+                        >
+                            {isLoading ? "Signing in..." : "Sign in"}
+                        </button>
+                    </form>
+
+                    {message && (
+                        <p className="message message-error">{message}</p>
+                    )}
+
+                    <div className="auth-footer">
+                        Don't have an account?{" "}
+                        <Link to="/register">Register</Link>
                     </div>
-
-                    <div className="form-group">
-                        <label>Password</label>
-                        <input
-                            className="input"
-                            type="password"
-                            placeholder="••••••••"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-
-                    <button
-                        className="btn btn-primary"
-                        type="submit"
-                        disabled={isLoading}
-                    >
-                        {isLoading ? "Signing in..." : "Sign in"}
-                    </button>
-                </form>
-
-                {message && (
-                    <p className="message message-error">{message}</p>
-                )}
-
-                <div className="auth-footer">
-                    Don't have an account?{" "}
-                    <Link to="/register">Register</Link>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 
