@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
 
 const Home = () => {
     const [searchParams] = useSearchParams();
@@ -12,18 +13,14 @@ const Home = () => {
         if (token) {
             localStorage.setItem("token", token);
 
-            // Remove token from URL
+            // remove token from URL
             navigate("/home", { replace: true });
         }
     }, [searchParams, navigate]);
 
     return (
         <>
-            <Navbar />
-            <div>
-                <h1>Welcome to CodeBifrost</h1>
-                <p>You are logged in.</p>
-            </div>
+            <Sidebar />
         </>
     );
 };
