@@ -120,8 +120,9 @@ export const analyzeRepository = async (req, res) => {
         }
         await clearStore(namespace);
         console.log("Total embedded chunks:", embeddedChunks.length);
-        //console.log("Sample chunk:", JSON.stringify(embeddedChunks[0], null, 2));
         await addChunks(embeddedChunks, namespace);
+        user.repositories.set(repo, url);
+        await user.save();
 
         // 8. Response
         res.json({

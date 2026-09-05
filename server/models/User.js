@@ -37,6 +37,11 @@ const userSchema = new mongoose.Schema({
     },
     avatar: {
         type: String
+    },
+    repositories: {
+        type: Map,
+        of: String,
+        default: {}
     }
 },
     {

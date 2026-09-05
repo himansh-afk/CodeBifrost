@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
+import Chat from "../components/Chat";
 
 const Home = () => {
     const [searchParams] = useSearchParams();
@@ -12,8 +13,6 @@ const Home = () => {
 
         if (token) {
             localStorage.setItem("token", token);
-
-            // remove token from URL
             navigate("/home", { replace: true });
         }
     }, [searchParams, navigate]);
@@ -21,6 +20,7 @@ const Home = () => {
     return (
         <>
             <Sidebar />
+            <Chat />
         </>
     );
 };
