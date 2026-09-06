@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowUp, LoaderCircle } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 import "./Chat.css";
 
 const GithubIcon = ({ size = 18, className = "" }) => (
@@ -15,15 +16,20 @@ const GithubIcon = ({ size = 18, className = "" }) => (
     </svg>
 );
 
-const Chat = () => {
-    const [input, setInput] = useState("");
+const Chat = ({ initialRepoUrl = "" }) => {
+    const { refreshUser } = useAuth();
+    const [input, setInput] = useState(initialRepoUrl);
     const [repoUrl, setRepoUrl] = useState("");
     const [repoName, setRepoName] = useState("");
     const [isAsking, setIsAsking] = useState(false);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [isRepositoryReady, setIsRepositoryReady] = useState(false);
     const [messages, setMessages] = useState([]);
-
+    useEffect(() => {
+        if (initialRepoUrl) {
+            setInput(initialRepoUrl);
+        }
+    }, [initialRepoUrl]);
     const handleSubmit = async (e) => {
         e.preventDefault();
         const value = input.trim();
@@ -60,6 +66,7 @@ const Chat = () => {
                 ]);
                 setIsRepositoryReady(true);
                 setInput("");
+                refreshUser();
             } catch (error) {
                 console.error("Repository analysis error:", error);
                 setMessages((prev) => [

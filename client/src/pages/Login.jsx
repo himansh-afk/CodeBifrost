@@ -2,9 +2,11 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
     const navigate = useNavigate();
+    const { refreshUser } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
@@ -19,6 +21,7 @@ const Login = () => {
                 { email, password }
             );
             localStorage.setItem("token", response.data.token);
+            await refreshUser();
             navigate("/home");
         } catch (error) {
             setMessage(error.response?.data?.message || "Login failed");

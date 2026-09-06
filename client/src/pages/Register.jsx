@@ -5,10 +5,12 @@ import { jwtDecode } from "jwt-decode";
 import { Lock } from "lucide-react";
 import "../Register.css";
 import Navbar from "../components/Navbar";
+import { useAuth } from "../context/AuthContext";
 
 const Register = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
+    const { refreshUser } = useAuth();
     const githubToken = searchParams.get("githubToken");
     let email = "";
     try {
@@ -16,9 +18,7 @@ const Register = () => {
             const payload = jwtDecode(githubToken);
             email = payload.email || "";
         }
-    } catch {
-
-    }
+    } catch { }
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [message, setMessage] = useState("");
@@ -37,23 +37,15 @@ const Register = () => {
         try {
             const response = await axios.post(
                 "http://localhost:5000/api/auth/github/register",
-                {
-                    githubToken,
-                    password
-                }
+                { githubToken, password }
             );
-            localStorage.setItem(
-                "token",
-                response.data.token
-            );
+            localStorage.setItem("token", response.data.token);
+            await refreshUser();
             navigate("/home");
         } catch (error) {
-
             setMessage(
-                error.response?.data?.message ||
-                "Registration failed"
+                error.response?.data?.message || "Registration failed"
             );
-
         } finally {
             setIsLoading(false);
         }
@@ -74,10 +66,7 @@ const Register = () => {
                                     value={email}
                                     readOnly
                                 />
-                                <Lock
-                                    className="input-lock-icon"
-                                    size={15}
-                                />
+                                <Lock className="input-lock-icon" size={15} />
                             </div>
                             <p className="input-hint">
                                 This email is linked to your GitHub account.
@@ -90,9 +79,7 @@ const Register = () => {
                                 type="password"
                                 placeholder="Create a strong password"
                                 value={password}
-                                onChange={(e) =>
-                                    setPassword(e.target.value)
-                                }
+                                onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
                         </div>
@@ -103,9 +90,7 @@ const Register = () => {
                                 type="password"
                                 placeholder="Confirm your password"
                                 value={confirmPassword}
-                                onChange={(e) =>
-                                    setConfirmPassword(e.target.value)
-                                }
+                                onChange={(e) => setConfirmPassword(e.target.value)}
                                 required
                             />
                         </div>
@@ -114,21 +99,15 @@ const Register = () => {
                             type="submit"
                             disabled={isLoading}
                         >
-                            {isLoading
-                                ? "Creating account..."
-                                : "Create account"}
+                            {isLoading ? "Creating account..." : "Create account"}
                         </button>
                     </form>
                     {message && (
-                        <p className="message message-error">
-                            {message}
-                        </p>
+                        <p className="message message-error">{message}</p>
                     )}
                     <div className="auth-footer">
                         Already have an account?{" "}
-                        <Link to="/login">
-                            Sign in
-                        </Link>
+                        <Link to="/login">Sign in</Link>
                     </div>
                 </div>
             </div>
