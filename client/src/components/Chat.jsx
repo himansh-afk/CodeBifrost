@@ -23,16 +23,13 @@ const Chat = () => {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [isRepositoryReady, setIsRepositoryReady] = useState(false);
     const [messages, setMessages] = useState([]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const value = input.trim();
-        if (!value || isAnalyzing) return;
+        if (!value || isAnalyzing || isAsking) return;
         if (!isRepositoryReady) {
-            const userMessage = {
-                id: Date.now(),
-                role: "user",
-                content: value
-            };
+            const userMessage = { id: Date.now(), role: "user", content: value };
             setMessages([userMessage]);
             setIsAnalyzing(true);
             try {
@@ -45,61 +42,37 @@ const Chat = () => {
                             "Content-Type": "application/json",
                             Authorization: `Bearer ${token}`
                         },
-                        body: JSON.stringify({
-                            url: value
-                        })
+                        body: JSON.stringify({ url: value })
                     }
                 );
                 const data = await response.json();
-                if (!response.ok) {
-                    throw new Error(
-                        data.message || "Repository analysis failed"
-                    );
-                }
+                if (!response.ok) throw new Error(data.message || "Repository analysis failed");
                 const name = data.repo || value.split("/").filter(Boolean).pop()?.replace(".git", "");
                 setRepoUrl(value);
                 setRepoName(name || "Repository");
-                const assistantMessage = {
-                    id: Date.now() + 1,
-                    role: "assistant",
-                    content: `✓ ${name || "Repository"} is mounted. Ask me anything about its code, architecture, or implementation.`
-                };
                 setMessages((prev) => [
                     ...prev,
-                    assistantMessage
+                    {
+                        id: Date.now() + 1,
+                        role: "assistant",
+                        content: `${name || "Repository"} is mounted. Ask me anything about its code, architecture, or implementation.`
+                    }
                 ]);
                 setIsRepositoryReady(true);
                 setInput("");
             } catch (error) {
-                console.error(
-                    "Repository analysis error:",
-                    error
-                );
-                const errorMessage = {
-                    id: Date.now() + 1,
-                    role: "assistant",
-                    content:
-                        error.message ||
-                        "Failed to analyze repository."
-                };
+                console.error("Repository analysis error:", error);
                 setMessages((prev) => [
                     ...prev,
-                    errorMessage
+                    { id: Date.now() + 1, role: "assistant", content: error.message || "Failed to analyze repository." }
                 ]);
             } finally {
                 setIsAnalyzing(false);
             }
             return;
         }
-        const userMessage = {
-            id: Date.now(),
-            role: "user",
-            content: value
-        };
-        setMessages((prev) => [
-            ...prev,
-            userMessage
-        ]);
+        const userMessage = { id: Date.now(), role: "user", content: value };
+        setMessages((prev) => [...prev, userMessage]);
         setInput("");
         setIsAsking(true);
         try {
@@ -112,57 +85,37 @@ const Chat = () => {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`
                     },
-                    body: JSON.stringify({
-                        question: value,
-                        url: repoUrl
-                    })
+                    body: JSON.stringify({ question: value, url: repoUrl })
                 }
             );
             const data = await response.json();
-            if (!response.ok) {
-                throw new Error(
-                    data.message || "Failed to answer question"
-                );
-            }
-            const assistantMessage = {
-                id: Date.now() + 1,
-                role: "assistant",
-                content: data.answer
-            };
+            if (!response.ok) throw new Error(data.message || "Failed to answer question");
+
             setMessages((prev) => [
                 ...prev,
-                assistantMessage
+                { id: Date.now() + 1, role: "assistant", content: data.answer }
             ]);
         } catch (error) {
-            console.error(
-                "Question error:",
-                error
-            );
-            const errorMessage = {
-                id: Date.now() + 1,
-                role: "assistant",
-                content:
-                    error.message ||
-                    "Failed to get an answer."
-            };
+            console.error("Question error:", error);
             setMessages((prev) => [
                 ...prev,
-                errorMessage
+                { id: Date.now() + 1, role: "assistant", content: error.message || "Failed to get an answer." }
             ]);
         } finally {
             setIsAsking(false);
         }
     };
+    const hasMessages = messages.length > 0;
     return (
         <main className="chat">
             {isRepositoryReady && (
-                <div className="active-repository">
-                    <GithubIcon size={15} />
+                <div className="chat-heading">
+                    <GithubIcon size={14} />
                     <span>{repoName}</span>
                 </div>
             )}
             <div className="chat-content">
-                {messages.length === 0 ? (
+                {!hasMessages ? (
                     <div className="chat-welcome">
                         <h1>CodeBifrost</h1>
                         <p>
@@ -173,54 +126,54 @@ const Chat = () => {
                 ) : (
                     <div className="messages">
                         {messages.map((msg) => (
-                            <div
-                                key={msg.id}
-                                className={`message ${msg.role}`}
-                            >
-                                <div className="message-bubble">
-                                    {msg.content}
-                                </div>
+                            <div key={msg.id} className={`message ${msg.role}`}>
+                                {msg.role === "assistant" ? (
+                                    <div className="message-body">
+                                        <div className="message-meta">
+                                            <div className="message-avatar">HMD</div>
+                                            <span className="message-sender">Hermod</span>
+                                        </div>
+                                        <div className="message-bubble">{msg.content}</div>
+                                    </div>
+                                ) : (
+                                    <div className="message-bubble">{msg.content}</div>
+                                )}
                             </div>
                         ))}
-                        {isAsking && (
+                        {isAnalyzing && (
                             <div className="message assistant">
-                                <div className="message-bubble">
-                                    Thinking...
+                                <div className="message-body">
+                                    <div className="message-meta">
+                                        <div className="message-avatar">HMD</div>
+                                        <span className="message-sender">Hermod</span>
+                                    </div>
+                                    <div className="message-bubble">Analyzing repository...</div>
                                 </div>
                             </div>
                         )}
-                        {isAnalyzing && (
+                        {isAsking && (
                             <div className="message assistant">
-                                <div className="message-bubble">
-                                    Analyzing repository...
+                                <div className="message-body">
+                                    <div className="message-meta">
+                                        <div className="message-avatar">HMD</div>
+                                        <span className="message-sender">Hermod</span>
+                                    </div>
+                                    <div className="message-bubble">Thinking...</div>
                                 </div>
                             </div>
                         )}
                     </div>
                 )}
             </div>
-            <div
-                className={`chat-input-container ${isRepositoryReady
-                    ? "chat-input-bottom"
-                    : "chat-input-center"
-                    }`}
-            >
-                <form
-                    className="chat-input-form"
-                    onSubmit={handleSubmit}
-                >
+            <div className={`chat-input-container ${hasMessages ? "chat-input-bottom" : "chat-input-center"}`}>
+                <form className="chat-input-form" onSubmit={handleSubmit}>
                     {!isRepositoryReady && (
-                        <GithubIcon
-                            className="input-icon"
-                            size={19}
-                        />
+                        <GithubIcon className="input-icon" size={18} />
                     )}
                     <input
                         type="text"
                         value={input}
-                        onChange={(e) =>
-                            setInput(e.target.value)
-                        }
+                        onChange={(e) => setInput(e.target.value)}
                         placeholder={
                             isRepositoryReady
                                 ? "Ask about this repository..."
@@ -230,20 +183,16 @@ const Chat = () => {
                     />
                     <button
                         type="submit"
-                        disabled={
-                            !input.trim() ||
-                            isAnalyzing ||
-                            isAsking
-                        }
+                        disabled={!input.trim() || isAnalyzing || isAsking}
                     >
-                        {isAnalyzing ? (
-                            <LoaderCircle className="spin" size={19} />
+                        {isAnalyzing || isAsking ? (
+                            <LoaderCircle className="spin" size={18} />
                         ) : (
-                            <ArrowUp size={19} />
+                            <ArrowUp size={18} />
                         )}
                     </button>
                 </form>
-                {!isRepositoryReady && (
+                {!hasMessages && (
                     <p className="input-hint">
                         CodeBifrost will analyze the repository before you can ask questions.
                     </p>
