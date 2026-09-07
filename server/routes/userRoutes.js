@@ -26,4 +26,23 @@ router.get("/me", authMiddleware, async (req, res) => {
     }
 });
 
+router.delete("/me", authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findByIdAndDelete(req.user.userId);
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+        res.json({
+            message: "Account deleted successfully"
+        });
+    } catch (error) {
+        console.error("DELETE ACCOUNT ERROR:", error);
+        res.status(500).json({
+            message: "Failed to delete account"
+        });
+    }
+});
+
 export default router;

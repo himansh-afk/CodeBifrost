@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from "react-router-dom"
 import "./Navbar.css";
-import logo from "../assets/codebifrost-logo.png";
+import logo from "../assets/codebifrost-logo.svg";
 
 const Navbar = () => {
     const navigate = useNavigate();
