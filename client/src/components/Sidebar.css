@@ -35,6 +35,7 @@
 .sidebar-brand {
     display: flex;
     align-items: center;
+    font-family: 'Berserker', sans-serif;
     gap: 9px;
     min-width: 0;
     color: #ffffff;
@@ -261,6 +262,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-family: 'Berserker', sans-serif;
 }
 
 .sidebar-popover {

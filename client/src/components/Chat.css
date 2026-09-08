@@ -16,6 +16,7 @@
 }
 
 .chat-heading {
+    font-family: 'Berserker', sans-serif;
     position: absolute;
     top: 0;
     left: 0;
@@ -127,6 +128,7 @@
 }
 
 .message-meta {
+    font-family: 'Berserker', sans-serif;
     display: flex;
     align-items: center;
     gap: 6px;

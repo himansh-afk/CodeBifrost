@@ -17,6 +17,32 @@ const GithubIcon = ({ size = 18, className = "" }) => (
     </svg>
 );
 
+const HermodAvatar = () => (
+    <svg
+        className="message-avatar"
+        viewBox="0 0 100 100"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <circle cx="50" cy="50" r="50" fill="url(#avatarGrad)" />
+        <defs>
+            <radialGradient id="avatarGrad" cx="40%" cy="35%">
+                <stop offset="0%" stopColor="#5a9ef5" />
+                <stop offset="100%" stopColor="#1a4f9c" />
+            </radialGradient>
+        </defs>
+        <circle cx="50" cy="50" r="3" fill="white" opacity="0.9" />
+        {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => (
+            <g key={i} transform={`rotate(${angle}, 50, 50)`}>
+                <line x1="50" y1="50" x2="50" y2="22" stroke="white" strokeWidth="2" opacity="0.85" />
+                <line x1="47" y1="30" x2="50" y2="22" stroke="white" strokeWidth="1.5" opacity="0.85" />
+                <line x1="53" y1="30" x2="50" y2="22" stroke="white" strokeWidth="1.5" opacity="0.85" />
+            </g>
+        ))}
+        <circle cx="50" cy="50" r="30" fill="none" stroke="white" strokeWidth="1" opacity="0.25" />
+        <circle cx="50" cy="50" r="20" fill="none" stroke="white" strokeWidth="0.75" opacity="0.15" />
+    </svg>
+);
+
 const useNorseLoader = (isActive, messages) => {
     const [index, setIndex] = useState(0);
     useEffect(() => {
@@ -164,7 +190,7 @@ const Chat = ({ initialRepoUrl = "" }) => {
                                 {msg.role === "assistant" ? (
                                     <div className="message-body">
                                         <div className="message-meta">
-                                            <div className="message-avatar">HMD</div>
+                                            <HermodAvatar />
                                             <span className="message-sender">Hermod</span>
                                         </div>
                                         <div className="message-bubble">
@@ -180,7 +206,7 @@ const Chat = ({ initialRepoUrl = "" }) => {
                             <div className="message assistant">
                                 <div className="message-body">
                                     <div className="message-meta">
-                                        <div className="message-avatar">HMD</div>
+                                        <HermodAvatar />
                                         <span className="message-sender">Hermod</span>
                                     </div>
                                     <div className="message-bubble">{analyzingText}</div>
@@ -191,7 +217,7 @@ const Chat = ({ initialRepoUrl = "" }) => {
                             <div className="message assistant">
                                 <div className="message-body">
                                     <div className="message-meta">
-                                        <div className="message-avatar">HMD</div>
+                                        <HermodAvatar />
                                         <span className="message-sender">Hermod</span>
                                     </div>
                                     <div className="message-bubble">{askingText}</div>
