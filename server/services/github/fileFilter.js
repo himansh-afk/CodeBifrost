@@ -20,7 +20,15 @@ const allowedExtensions = new Set([
     ".html",
     ".css",
     ".scss",
-    ".sql"
+    ".sql",
+    ".ipynb",
+    ".md",
+    ".yaml",
+    ".yml",
+    ".json",
+    ".toml",
+    ".txt",
+    ".csv",
 ]);
 
 const allowedFiles = new Set([
@@ -47,19 +55,20 @@ const ignoredFiles = new Set([
     ".env",
     ".env.local",
     ".env.development",
-    ".env.production"
+    ".env.production",
+    "package-lock.json",
+    "yarn.lock",
+    "poetry.lock"
 ]);
 
 export const filterSourceFiles = (tree) => {
     return tree.filter((item) => {
-        // We only want actual files, not directories
         if (item.type !== "blob") {
             return false;
         }
 
         const pathParts = item.path.split("/");
 
-        // Ignore unwanted directories
         const hasIgnoredDirectory = pathParts.some((part) =>
             ignoredDirectories.has(part)
         );
@@ -70,17 +79,14 @@ export const filterSourceFiles = (tree) => {
 
         const fileName = pathParts[pathParts.length - 1];
 
-        // Ignore environment files
         if (ignoredFiles.has(fileName)) {
             return false;
         }
 
-        // Allow important files without extensions
         if (allowedFiles.has(fileName)) {
             return true;
         }
 
-        // Check extension
         const extension = fileName.includes(".")
             ? "." + fileName.split(".").pop().toLowerCase()
             : "";

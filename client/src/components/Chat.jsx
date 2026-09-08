@@ -88,7 +88,7 @@ const Chat = ({ initialRepoUrl = "" }) => {
                     {
                         id: Date.now() + 1,
                         role: "assistant",
-                        content: `${name || "Repository"} is mounted. Ask me anything about its code, architecture, or implementation.`
+                        content: `**${name}** — ${data.filesProcessed} files analyzed.\n\n${data.summary}`
                     }
                 ]);
                 setIsRepositoryReady(true);

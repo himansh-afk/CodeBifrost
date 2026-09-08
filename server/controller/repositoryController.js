@@ -7,6 +7,7 @@ import { chunkCode } from "../services/rag/chunker.js";
 import { generateEmbedding } from "../services/rag/embedder.js";
 import User from "../models/User.js";
 import { getValidGithubAccessToken } from "../services/github/githubAuthService.js";
+import { generateRepoSummary } from "../services/llm/llmService.js";
 
 export const askRepository = async (req, res) => {
     try {
@@ -124,8 +125,9 @@ export const analyzeRepository = async (req, res) => {
         user.repositories.set(repo, url);
         await user.save();
 
-        // 8. Response
-        res.json({
+        const summary = await generateRepoSummary(repo, sourceFiles);// 8. Generate repo summary
+
+        res.json({// 9. Response
             owner,
             repo,
             branch,
@@ -133,6 +135,7 @@ export const analyzeRepository = async (req, res) => {
             totalTreeItems: tree.tree.length,
             filesFound: files.length,
             filesProcessed: sourceFiles.length,
+            summary,
             totalChunks: embeddedChunks.length,
             embeddingDimensions:
                 embeddedChunks[0]?.embedding?.length || 0
@@ -147,9 +150,6 @@ export const analyzeRepository = async (req, res) => {
             error:
                 error.response?.data?.message ||
                 error.message
-
         });
-
     }
-
 };
