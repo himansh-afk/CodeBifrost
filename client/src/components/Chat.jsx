@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { ArrowUp, LoaderCircle } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import "./Chat.css";
+import ReactMarkdown from "react-markdown";
 
 const GithubIcon = ({ size = 18, className = "" }) => (
     <svg
@@ -15,6 +16,18 @@ const GithubIcon = ({ size = 18, className = "" }) => (
         <path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.167 6.839 9.49.5.092.682-.217.682-.483 0-.237-.009-.866-.014-1.7-2.782.604-3.369-1.342-3.369-1.342-.455-1.157-1.11-1.465-1.11-1.465-.909-.621.069-.608.069-.608 1.004.071 1.532 1.03 1.532 1.03.893 1.53 2.341 1.088 2.91.832.091-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0 1 12 6.844a9.56 9.56 0 0 1 2.504.337c1.909-1.294 2.748-1.025 2.748-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.337-.012 2.416-.012 2.744 0 .269.18.58.688.482A10.001 10.001 0 0 0 22 12C22 6.477 17.523 2 12 2Z" />
     </svg>
 );
+
+const useNorseLoader = (isActive, messages) => {
+    const [index, setIndex] = useState(0);
+    useEffect(() => {
+        if (!isActive) { setIndex(0); return; }
+        const interval = setInterval(() => {
+            setIndex((prev) => (prev + 1) % messages.length);
+        }, 3000);
+        return () => clearInterval(interval);
+    }, [isActive]);
+    return messages[index];
+};
 
 const Chat = ({ initialRepoUrl = "" }) => {
     const { refreshUser } = useAuth();
@@ -30,6 +43,20 @@ const Chat = ({ initialRepoUrl = "" }) => {
             setInput(initialRepoUrl);
         }
     }, [initialRepoUrl]);
+    const analyzingMessages = [
+        "Heimdall is scanning the runes...",
+        "Odin is reading the scrolls...",
+        "The Bifrost is opening...",
+        "Hermod is mapping the code...",
+    ];
+    const askingMessages = [
+        "Hermod is fetching the answer...",
+        "Consulting the Allfather...",
+        "Reading the ancient scripts...",
+        "Odin ponders your question...",
+    ];
+    const analyzingText = useNorseLoader(isAnalyzing, analyzingMessages);
+    const askingText = useNorseLoader(isAsking, askingMessages);
     const handleSubmit = async (e) => {
         e.preventDefault();
         const value = input.trim();
@@ -140,7 +167,9 @@ const Chat = ({ initialRepoUrl = "" }) => {
                                             <div className="message-avatar">HMD</div>
                                             <span className="message-sender">Hermod</span>
                                         </div>
-                                        <div className="message-bubble">{msg.content}</div>
+                                        <div className="message-bubble">
+                                            <ReactMarkdown>{msg.content}</ReactMarkdown>
+                                        </div>
                                     </div>
                                 ) : (
                                     <div className="message-bubble">{msg.content}</div>
@@ -154,7 +183,7 @@ const Chat = ({ initialRepoUrl = "" }) => {
                                         <div className="message-avatar">HMD</div>
                                         <span className="message-sender">Hermod</span>
                                     </div>
-                                    <div className="message-bubble">Analyzing repository...</div>
+                                    <div className="message-bubble">{analyzingText}</div>
                                 </div>
                             </div>
                         )}
@@ -165,7 +194,7 @@ const Chat = ({ initialRepoUrl = "" }) => {
                                         <div className="message-avatar">HMD</div>
                                         <span className="message-sender">Hermod</span>
                                     </div>
-                                    <div className="message-bubble">Thinking...</div>
+                                    <div className="message-bubble">{askingText}</div>
                                 </div>
                             </div>
                         )}

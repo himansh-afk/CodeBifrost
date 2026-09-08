@@ -24,13 +24,14 @@
     height: 56px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 7px;
     pointer-events: none;
     color: #173f6d;
     font-size: 1.05rem;
     font-weight: 700;
     letter-spacing: -0.3px;
+    padding-left: 24px;
 }
 
 .chat-heading svg {
@@ -78,7 +79,7 @@
 .messages {
     width: min(820px, calc(100% - 48px));
     margin: 0 auto;
-    padding: 72px 0 32px;
+    padding: 24px 0 32px;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -294,4 +295,40 @@
     to {
         transform: rotate(360deg);
     }
+}
+
+.message-bubble p {
+    margin: 0 0 8px;
+}
+
+.message-bubble p:last-child {
+    margin-bottom: 0;
+}
+
+.message-bubble ul,
+.message-bubble ol {
+    padding-left: 20px;
+    margin: 4px 0 8px;
+}
+
+.message-bubble li {
+    margin-bottom: 4px;
+}
+
+.message-bubble code {
+    background: rgba(40, 90, 150, 0.08);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.85em;
+}
+
+.message-bubble pre {
+    background: rgba(40, 90, 150, 0.06);
+    padding: 12px;
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+.message-bubble strong {
+    color: #173f6d;
 }
